@@ -185,6 +185,8 @@ t_env				*init_env(char **envp);
 char				**env_list_to_array(t_env *env_list);
 char				*build_env_string(char *name, char *value);
 
+void	free_token(t_token *token);
+
 void				unset_var(t_env **env_list, char *name);
 int					ft_unset(char **cmd, t_env **env_list);
 void				update_pwd_vars(char *oldpwd, t_env *envlist);
