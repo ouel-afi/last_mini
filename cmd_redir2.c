@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd_redir2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ouel-afi <ouel-afi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 12:04:06 by taya              #+#    #+#             */
-/*   Updated: 2025/07/25 12:05:41 by taya             ###   ########.fr       */
+/*   Updated: 2025/07/25 14:46:27 by ouel-afi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,45 @@
 t_token	*create_final_cmd_token(t_cmd_data *data)
 {
 	t_token	*cmd_token;
+	char	**cmds_copy;
+	int		i;
 
 	data->cmds[data->cmd_count] = NULL;
-	if (data->cmds && data->cmds[0])
-		cmd_token = create_token(data->cmds[0], 0, 0);
+	cmds_copy = malloc(sizeof(char *) * (data->cmd_count + 1));
+	if (!cmds_copy)
+		return (NULL);
+	i = 0;
+	while (i < data->cmd_count)
+	{
+		cmds_copy[i] = ft_strdup(data->cmds[i]);
+		i++;
+	}
+	cmds_copy[i] = NULL;
+
+	if (cmds_copy[0] != NULL)
+		cmd_token = create_token(cmds_copy[0], 0, 0);
 	else
 		cmd_token = create_token("", 0, 0);
+
 	cmd_token->type = CMD;
-	cmd_token->cmds = data->cmds;
+	cmd_token->cmds = cmds_copy;
 	cmd_token->redir = data->redir_head;
 	return (cmd_token);
+}
+void	free_cmd_data(t_cmd_data *data)
+{
+	int i = 0;
+
+	while (i < data->cmd_count)
+		free(data->cmds[i++]);
+	free(data->cmds);
+	data->cmds = NULL;
 }
 
 t_token	*process_non_pipe_tokens(t_token **tmp)
 {
 	t_cmd_data	data;
+	t_token *result;
 
 	init_cmd_data(&data);
 	if (!data.cmds)
@@ -48,7 +72,9 @@ t_token	*process_non_pipe_tokens(t_token **tmp)
 		else
 			*tmp = (*tmp)->next;
 	}
-	return (create_final_cmd_token(&data));
+	result = create_final_cmd_token(&data);
+	free_cmd_data(&data);
+	return (result);
 }
 
 t_token	*get_cmd_and_redir(t_token *token_list)

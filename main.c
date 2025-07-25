@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: taya <taya@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: ouel-afi <ouel-afi@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 15:45:13 by ouel-afi          #+#    #+#             */
-/*   Updated: 2025/07/25 12:06:01 by taya             ###   ########.fr       */
+/*   Updated: 2025/07/25 14:42:44 by ouel-afi         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ int	main(int ac, char **av, char **env)
 	char *input = NULL;
 	(void)ac;
 	(void)av;
+	atexit(ll);
 	// (void)env;
 	t_env *env_list = init_env(env);
 	setup_shell_terminal();
@@ -124,10 +125,9 @@ int	main(int ac, char **av, char **env)
 		}
 		execute_cmds(final_token, &env_list, &last_exit_status);
 		close_heredoc_fds(final_token);
-		// free(input);
-		// free_token_list(token_list);
-		// free_token_list(final_token);
-		// free_env_list(env_list);
-		// print_linked_list(final_token);
+		free(input);
+		free_token_list(token_list);
+		free_token_list(final_token);
 	}
+	free_env_list(env_list);
 }
